@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>TagremVN - DevBox Help</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="css/simple-sidebar.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+    <div id="wrapper" class="toggled">
+
+        <!-- Sidebar -->
+        <div id="sidebar-wrapper">
+            <ul class="sidebar-nav">
+                <li class="sidebar-brand">
+                    <a href="#">
+                        DevBox Document
+                    </a>
+                </li>
+                <li>
+                    <a href="/docs/index.html">Home</a>
+                </li>
+                <li>
+                    <a href="/docs/about.html">About this box</a>
+                </li>
+                <li>
+                    <a href="/docs/workflow.html">Development workflow</a>
+                </li>
+                <li>
+                    <a href="/docs/vagrant.html">Vagrant basis</a>
+                </li>
+            </ul>
+        </div>
+        <!-- /#sidebar-wrapper -->
+
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+            <div class="container-fluid">
+
+            </div>
+        </div>
+        <!-- /#page-content-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/popper/popper.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+
+    <!-- Menu Toggle Script -->
+    <script>
+        $('ul.sidebar-nav li a').click(function(){
+            $('div.container-fluid').load(this.href);
+            console.log(this.href);
+            return false;
+        });
+
+        $('div.container-fluid').load('/docs/index.html');
+
+        $("#menu-toggle").click(function(e) {
+            e.preventDefault();
+            $("#wrapper").toggleClass("toggled");
+        });
+    </script>
+
+</body>
+
+</html>

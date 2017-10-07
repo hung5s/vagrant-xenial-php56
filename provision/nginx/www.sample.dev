@@ -1,0 +1,7 @@
+server {
+	include snippets/indition.conf;
+
+	root /host/projects/sample/web;
+	server_name www.sample.dev;
+}
+

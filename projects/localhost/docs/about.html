@@ -1,0 +1,34 @@
+<h1>About this Box</h1>
+<hr/>
+<h2>Software</h2>
+<ul>
+    <li>OS: Ubuntu Xenial</li>
+    <li>Nginx</li>
+    <li>PHP 5.6 with PHPFPM</li>
+</ul>
+
+<h2>Important directories</h2>
+
+<p>The <code>projects</code> directory has 2 projects</p>
+<ul>
+    <li><code>localhost</code>: it's where you find this document</li>
+    <li><code>sample</code>: the sample project that is almost ready to run to verify that your box works properly</li>
+</ul>
+
+<p>The sample project is pre-configure with its homepage showing <code>phpinfo()</code>. Read the Development Workflow
+for steps to set it up and test your box.</p>
+
+<h2>About databases</h2>
+<p>This box <strong>does not include any database server</strong>. We recommend you to install the database server(s)
+on your host machine for these reasons:</p>
+
+<ul>
+    <li>Although the purpose of using boxed development environment is to create one environment for all developers as well
+    as test, production environment, there is a low chance that DB server cause a problem. Usually it is problem with locale
+    or data format</li>
+    <li>You can work with the database(s) without your box running</li>
+    <li>You can use one DB server for multiple databases. If your projects relate, it is easier to have one DB server with all
+    related databases</li>
+    <li>If you need a DB client software, running database server inside the box require additional port forwarding and
+    Vagrant need to fix port collision when you  have many boxes running</li>
+</ul>
