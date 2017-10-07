@@ -1,0 +1,5 @@
+1. Checkout this project into a new folder which will be the root folder of your new Vagrant box
+2. If you haven't isntall Vagrant and VirtualBox on your machine, download and install them (see links below)
+3. Open a terminal, make sure you are at the root folder
+4. Run: vagrant up
+5. As the provisioning process is done, open http://localhost:8080 for the DevBox document.
