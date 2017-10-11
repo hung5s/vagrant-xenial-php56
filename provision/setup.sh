@@ -21,4 +21,4 @@ sudo apt-get update
 
 # Install
 sudo apt-get install -y php5.6 php5.6-cli php5.6-fpm
-sudo apt-get install -y php5.6-mbstring php5.6-mcrypt php5.6-mysql php5.6-xml php5.6-pgsql php5.6-curl php5.6-soap
+sudo apt-get install -y php5.6-mbstring php5.6-mcrypt php5.6-mysql php5.6-xml php5.6-pgsql php5.6-curl php5.6-soap php5.6-zip
