@@ -1,0 +1,127 @@
+<h1>Setup an Indition base project</h1>
+
+<h2>The deploy tool</h2>
+
+<p>You can use <code>deploy</code> tool to setup an Indition base project. Whether you initalize a new project or replicate an exisitng Indition base website.</p>
+
+<h3>Pre-requirement</h3>
+
+<ul>
+	<li>PostgreSQL database on your host</li>
+	<li>An empty database for your project</li>
+	<li>If you replicate an existing Indition site, you need the latest DB dump file (pg_dump) of that site</li>
+	<li>Project root folder should be in <code>/host/projects/</code></li>
+	<li>If you are replicating an existing Indition site, download its source information into <code>project-folder/source.json</code></li>
+	<li>Permission to edit <code>etc/hosts</code> file on your Host</li>
+	<li>SVN account</li>
+	<li>Connection to Tagrem Corp SVN server</li>
+</ul>
+
+<h3>Using deploy tool</h3>
+
+<p>This box has <code>deploy</code> tool in <code>/hosts/projects/deploy</code>, the basic command to run it is <code>php /deploy/run.php</code>assume that you are in <code>/host/projects/</code></p>
+
+<p>Basic command gives you some help and list the controllers available. The most used controller is <strong>Project</strong>. To see what <strong>Project</strong> can do, run <code>php deploy/run.php Project/Help</code>:</p>
+
+<pre>
+/install
+--------
+Create project structure and checkout code for a new project
+  -path path to project root folder
+
+/index
+------
+Sync code for modules
+  -path path to project root folder
+  -modules modules to sync code, separated by comma (,). If not specified all modules will be synced
+
+/deploy
+-------
+Sync code for modules
+  -path path to project root folder
+  -modules modules to sync code, separated by comma (,). If not specified all modules will be synced
+
+/nginx
+------
+Generate NginX configuration file for the virtual host
+  -path
+</pre>
+
+<p>Following we will just use <code>Controller/action</code> instead of <code>php /host/projects/deploy/run.php Controller/action</code> as the command to run.</p>
+
+<p>Use <code>Project/install</code> to setup new project or replicate an existing Indition site. During development, use <code>Project/index</code> or simply <code>Project</code> to checkout latest code for all Indition modules.</p>
+
+<h3>Initialize a new Indition base project</h3>
+
+
+<p class="alert alert-warning">Run <code>svn up</code> in <code>/host/projects/deploy</code> for the tool to get the latest Indtion release information.</blockquote>
+
+<p>Simply run <code>Project/install --path=project-root-folder</code> to have <code>deploy</code> creates a new Indition project for you with the latest release of all essential modules.</p>
+
+<p>You are asked for a few project details and this information is saved to <code>project.json</code>. Please note that for database connection, <strong>you cannot</strong> use <code>localhost</code> as DB server unless you manually install a DB server. Look at your Vagrantfile for the IP address of your Host. Usually, it is 192.168.33.1</p>
+
+<h3>Replicate an existing Indition site</h3>
+
+<p class="alert alert-warning">You need a <code>source.json</code> file in your project root folder. <code>deploy</code> tool uses this file to know which modules and branch/tags to use in your project. See how to in section "Obtain source.json from existing file" below.</p>
+
+<p>The same command <code>Project/install</code> is used when replicate a site.</p>
+
+<p>You are asked for a few project details and this information is saved to <code>project.json</code>. Please note that for database connection, <strong>you cannot</strong> use <code>localhost</code> as DB server unless you manually install a DB server. Look at your Vagrantfile for the IP address of your Host. Usually, it is 192.168.33.1</p>
+
+<p class="alert alert-success">Base on the <code>source.json</code>, the tool suggest some values for your project including <code>SITE_ID, SITE_OWNER, SITE_DIR</code>. Using the suggested values ensure that your local site works with exactly the same configuration as the live site.</p>
+
+<h3>Checking out source code</h3>
+
+<p>Some Indtion project has a large code base and the checkout process may stops due to Internet connection or you manually stop it. You can run <code>Project/install</code> many times to have your source code checkout completely as the tool resume at the last checkout point.</p>
+
+<p class="alert alert-danger"><strong>Storate</strong> is a huge module which is more than 300MB. This module does not has a lot of change or update. If you already has a tag version of the module else where, be sure to remove Storage from <code>source.js</code> file to checkout faster. <br /> Make sure you copy Storage module into your project's <code>core/modules/</code> after the first checkout.</p>
+
+<h3>Configure the web server</h3>
+
+<p>Run <code>Project/nginx</code> to get the Nginx configuration file for the site. Base on your project's domain the file is generated with SSL and URL rewrite rules that is ready to used.</p>
+
+<p class="alert alert-info">Edit <code>project.json</code> to change domain if needed. Make sure you also copy/rename the env file in <code>web/env/</code></p>
+
+<h4>Obtain source.json from existing file</h4>
+<p>You need to be able to access to your site's Admin to download this file.</p>
+<ul>
+	<li>Login to Admin</li>
+	<li>Expand the sidebar on the left, click your username (above Visit Site link)</li>
+	<li>Click (i) icon to go to Server Information page</li>
+	<li>On that page, click Download button to downlad the file</li>
+	<li>Rename the file to source.json once you have copied it to your project root folder</li>
+</ul>
+
+<hr />
+
+<h2>Troubleshooting</h2>
+
+<p>If you replicate an existing Indition site, because of different versions of CORE and other modules there could be some errors.</p>
+
+<h4>Forgot port forwarding</h4>
+<p>Remember that your site is inside a Vagrant box and usually cannot be reach on port 80. Even when you map port 80 from host to the box, Vagrant may auto-fix the port collision when start the box. Make sure you look at the log when Vagrant starts up.</p>
+
+<h4>No env file</h4>
+<p>If you use domain www.abc.com, make sure you have <code>web/env/config.www.abc.com.php</code></p>
+
+<h4>No workflow</h4>
+<p>If you load a live database dump file into your local DB, the workflow for your local domain is not there. Run this command:</p>
+
+<pre>
+	INSERT INTO <SITE_ID>_workflow_url(workflow_id, workflow_url, status) VALUES(1,'your domain without http://',true);
+	--for workflow_id you may want to use 2 (LIVE workflow) or 5 (staging workflow) instead of 1 (dev workflow)
+</pre>
+
+<h4>'assets' folder</h4>
+<p>The <code>assets</code> folder under <code>web/admin/</code> (or <code>web/crm</code>) or <code>web/sites/SITE_DIR/</code> must be writable. <code>SITE_DIR</code> is the value defined in your env file in <code>web/env/</code></p>
+
+<h4>'runtime' folder</h4>
+<p>Similar to <code>assets</code>, the <code>runtime</code> folder has to be writabe. <code>runtime</code> and <code>assets</code> are at the same location, regarding the frontend or Admin or CRM or Test,... application you are trying to access.</p>
+
+<h4>Cannot connect to database</h4>
+<p>Unless you install a DB server inside your box, do not use <code>localhost</code> as DB Host in your env file. Use <code>ping</code> to check that you can reach the Host from within your box (you must be inside the box by running <code>vagrant ssh</code> first).</p>
+
+<p>See Sample project section for more information about DB configuration</p>
+
+<h4>Missing DB driver</h4>
+<p>Indition uses PDO to connect wiht database. This box has PDO driver for PostgreSQL and MySQL. Other type of DB server require additional PDO driver installed.</p>

@@ -1,0 +1,58 @@
+
+<h2>Getting started</h2>
+
+<p>If you are new to this box or even new to Vagrant, you can use the sample project to play with the new working environment.
+To setup the sample project:</p>
+
+<ul>
+    <li>SSH to your box (make sure you are at the root directory of your project):
+        <br><code>vagrant ssh</code></li>
+    <li>Copy Nginx config file for www.sample.dev:
+        <br><code>sudo cp /host/provision/nginx/www.sample.dev /etc/nginx/sites-available/</code></li>
+    <li>Enable virtual host:
+        <br><code>sudo ln -s /etc/nginx/sites-available/www.sample.dev /etc/nginx/sites-enabled/www.sample.dev</code></li>
+    <li>Check snakeoil SSL certificate:
+        <br><code>ls /etc/ssl/certs/ssl-cert-snakeoil.pem</code></li>
+    <li>If you don't see the file, generate a new one:
+        <br><code>sudo openssl req -x509 -nodes -days 3650 -newkey rsa:2048 -keyout /etc/ssl/private/ssl-cert-snakeoil.key -out /etc/ssl/certs/ssl-cert-snakeoil.pem</code></li>
+    <li>Restart Nginx:
+        <br><code>sudo systemctl restart nginx</code></li>
+    <li>Configure your host file to have <code>www.sample.dev</code> point to <code>127.0.0.1</code>.
+        If you are on Windows, edit c:/windows/system32/drivers/etc/hosts. On Unix edit file /etc/hosts</li>
+    <li>This box is configured to map port 8080 from host to port 80 in the box.
+        To check www.sample.dev, go to
+        <br><code>http://www.sample.dev:8080</code></li>
+</ul>
+
+<h2>Working in your project</h2>
+
+<h3>Shared folders</h3>
+
+<p>You can access everything under your project root from /host inside your box. Your project folder should be under /host/projects/ inside the box</p>
+
+<p>Folders in host and your boxes are synced thanks to VirtualBox shared folder feature (not Vagrant). If you have problem files are not synced, look for
+debug info Vagrant shows while the box is booting up.</p>
+
+<p>As folders and files are synced you can use IDE on your host to work as usual. You can install a GUI tool <strong>on your host</strong>
+to work with Git or SVN, etc.</p>
+
+<h3>Connect to your database server</h3>
+
+<p><strong>This box does not have database server installed</strong>. You would rather use your host machine as the database server.</p>
+
+<p>This box is configured to be able to access the host on IP <code>192.168.33.1</code> so that you can use this IP in your connection string.
+    To change this IP, look into Vagrantfile where you found <code>192.168.33.10</code> is the IP of the box (.1 is the host).
+    <br><strong>You may need to configure your database server to listen on this IP and allow access from the host IP</strong></p>
+
+<h4>Example of PostgreSQL configuration on host</h4>
+
+<p>PostgreSQL HBA file on a Windows host. File d:\pgsql\9.6\data\pg_hba.conf:</p>
+
+<pre>
+# IPv4 local connections:
+host    all             all             127.0.0.1/32            trust
+host    all             all             192.168.33.10/32            trust
+</pre>
+
+For PostgreSQL installed on Windows, it's already configured to listen on all IP addresses. If it is not your case,
+look into <code>postgresql.conf</code> for <code>listen_addresses = '*'</code>
