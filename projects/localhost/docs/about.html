@@ -3,8 +3,11 @@
 <h2>Software</h2>
 <ul>
     <li>OS: Ubuntu Xenial</li>
-    <li>Nginx</li>
+    <li>Web server: Nginx</li>
     <li>PHP 5.6 with PHPFPM</li>
+    <li>No database server installed! We recommend installing DB server on your host</li>
+    <li>Git</li>
+    <li>Subversion</li>
 </ul>
 
 <h2>Important directories</h2>
@@ -32,3 +35,23 @@ on your host machine for these reasons:</p>
     <li>If you need a DB client software, running database server inside the box require additional port forwarding and
     Vagrant need to fix port collision when you  have many boxes running</li>
 </ul>
+
+<h2>Quick Start</h2>
+
+<p>See Sample project for quickly setup an empty web project and check the PHP Information. This does not require SVN access to Tagrem Corp SVN server.</p>
+
+<p class="alert alert-warning">You need SVN access to Tagrem Corp SVN server to do the following.</p>
+
+<p>To initialize a new Indition project, run <code>php /host/projects/deploy/run.php Project/install --path=/host/projects/new-project</code></p>
+
+<p>To replicate an existing Indition site:</p>
+
+<ul>
+    <li>Make sure you have access to that site's Admin to donwload the source infromation (domain.json) from Server Information page</li>
+    <li>Create an empty project folder</li>
+    <li>Copy the source file into your project folder, rename it to <code>source.json</code></li>
+    <li>run <code>php /host/projects/deploy/run.php Project/install --path=/host/projects/new-project</code></li>
+    <li>run <code>php /host/projects/deploy/run.php Project/nginx --path=/host/projects/new-project</code> to generate Nginx config file and follow the guide to reconfigure the web server</li>
+</ul>
+
+<p class="alert alert-info">For more information, see Indition base project section</p>

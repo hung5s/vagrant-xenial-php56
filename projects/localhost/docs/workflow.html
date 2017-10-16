@@ -1,59 +1,54 @@
 <h1>Development workflow</h1>
 
-<h2>Getting started</h2>
+<h2>Cronjob to checkout code</h2>
 
-<p>If you are new to this box or even new to Vagrant, you can use the sample project to play with the new working environment.
-To setup the sample project:</p>
+<p>Create a cronjob to update code regularly with this checkout command:</p>
+
+<pre>*/30 * * * * php /host/projects/deploy/run.php Project --path=/host/projects/your-project</pre>
+
+<h2>Committing code</h2>
+
+<p>Each module (or theme, config folder) in Indition has its own SVN, when commit code note that:</p>
 
 <ul>
-    <li>SSH to your box (make sure you are at the root directory of your project):
-        <br><code>vagrant ssh</code></li>
-    <li>Copy Nginx config file for www.sample.dev:
-        <br><code>sudo cp /host/provision/nginx/www.sample.dev /etc/nginx/sites-available/</code></li>
-    <li>Enable virtual host:
-        <br><code>sudo ln -s /etc/nginx/sites-available/www.sample.dev /etc/nginx/sites-enabled/www.sample.dev</code></li>
-    <li>Check snakeoil SSL certificate:
-        <br><code>ls /etc/ssl/certs/ssl-cert-snakeoil.pem</code></li>
-    <li>If you don't see the file, generate a new one:
-        <br><code>sudo openssl req -x509 -nodes -days 3650 -newkey rsa:2048 -keyout /etc/ssl/private/ssl-cert-snakeoil.key -out /etc/ssl/certs/ssl-cert-snakeoil.pem</code></li>
-    <li>Restart Nginx:
-        <br><code>sudo systemctl restart nginx</code></li>
-    <li>Configure your host file to have <code>www.sample.dev</code> point to <code>127.0.0.1</code>.
-        If you are on Windows, edit c:/windows/system32/drivers/etc/hosts. On Unix edit file /etc/hosts</li>
-    <li>This box is configured to map port 8080 from host to port 80 in the box.
-        To check www.sample.dev, go to
-        <br><code>http://www.sample.dev:8080</code></li>
+    <li>If you are using a SVN client tool, DO NOT commit files in 2 or more modules at once</li>
+    <li>Run <code>svn diff --summarize . -r head</code> inside a module folder to see list of changed files</li>
+    <li>Run <code>svn diff . -r head > [module-name].diff</code> to have all the changes of all files written into a .diff file. Most of SVN/Git tool will be able to read .diff file and show visual diffs</li>
 </ul>
 
-<h2>Working in your project</h2>
+<h2>DB patches and Reloading DB</h2>
 
-<h3>Shared folders</h3>
+<p class="alert alert-warniing">Before reloading your local DB with a DB dump file, i.e. from LIVE site, make sure you backup your data</p>
 
-<p>You can access everything under your project root from /host inside your box. Your project folder should be under /host/projects/ inside the box</p>
+<p>Use/write Indtion patch file to altery DB schema such as create new table or change column data type, add/remove column. Also use patch to insert/delete data if needed.</p>
 
-<p>Folders in host and your boxes are synced thanks to VirtualBox shared folder feature (not Vagrant). If you have problem files are not synced, look for
-debug info Vagrant shows while the box is booting up.</p>
+<p>Some commands to work with PostgreSQL</p>
 
-<p>As folders and files are synced you can use IDE on your host to work as usual. You can install a GUI tool <strong>on your host</strong>
-to work with Git or SVN, etc.</p>
+<ul>
+    <li>Connect to DB from console: <code>psql -U postgres</code> Type \q to exit</li>
+    <li>Empty the database: <code>psql -U postgres -d db-name -c "drop schema public cascade;"</code></li>
+    <li>Load a dump file into database: <code>psql -U postgres -d db-name -f path-to-file</code></li>
+    <li>Dump a database into file: <code>pg_dump -U postgres -h db-host db-name --exclude-table-data '*_log' -T 'prefix_*' | gzip -c > file-name.gz</code></li>
+    <li>Dump only selected tables: <code>pg_dump -U postgres -h db-host db-name -t table-name -f filename.sql</code></li>
+</ul>
 
-<h3>Connect to your database server</h3>
+<h2>Testing APIs</h2>
 
-<p><strong>This box does not have database server installed</strong>. You would rather use your host machine as the database server.</p>
+<p>Indition has a strong API documentor and test tool. Make sure you checkout <code>Test</code> mdoule and go to <strong>/test</strong> to start using this tool.</p>
 
-<p>This box is configured to be able to access the host on IP <code>192.168.33.1</code> so that you can use this IP in your connection string.
-    To change this IP, look into Vagrantfile where you found <code>192.168.33.10</code> is the IP of the box (.1 is the host).
-    <br><strong>You may need to configure your database server to listen on this IP and allow access from the host IP</strong></p>
+<ul>
+    <li>New API is detected automationcally</li>
+    <li>You can view your API source code directly inside the tool</li>
+    <li>Use 'Edit Tests' to edit or generate new tests for your API</li>
+    <li>Write your API and run your test simultanously help you test your API code faster</li>
+</ul>
 
-<h4>Example of PostgreSQL configuration on host</h4>
+<h3>Why test?</h3>
+<p>Writing tests for your new API or generating even only basic test for existing APIs gives a lot of benefit.</p>
 
-<p>PostgreSQL HBA file on a Windows host. File d:\pgsql\9.6\data\pg_hba.conf:</p>
-
-<pre>
-# IPv4 local connections:
-host    all             all             127.0.0.1/32            trust
-host    all             all             192.168.33.10/32            trust
-</pre>
-
-For PostgreSQL installed on Windows, it's already configured to listen on all IP addresses. If it is not your case,
-look into <code>postgresql.conf</code> for <code>listen_addresses = '*'</code>
+<ul>
+    <li>Test tools helps you run <strong>many tests</strong> against your API with one click.</li>
+    <li>If you change an API, run all tests is the fastest way to make sure your change passes all tests</li>
+    <li>Testing APIs within /test environment keeps your DB safe</li>
+    <li>Test result (shown in Chrome debug window) provide information about <strong>time spent per API</strong>, <strong>hooks</strong> and results of each hooks</li>
+</ul>
