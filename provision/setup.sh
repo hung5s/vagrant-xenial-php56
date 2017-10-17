@@ -5,6 +5,7 @@ apt-get install -y nginx
 
 sudo cp /tmp/default /etc/nginx/sites-available/
 sudo cp /tmp/indition.conf /etc/nginx/snippets/
+sudo cp /tmp/www.conf /etc/php/5.6/fpm/pool.d/
 
 sudo openssl req -x509 -nodes -days 3650 -newkey rsa:2048 -keyout /etc/ssl/private/ssl-cert-snakeoil.key -out /etc/ssl/certs/ssl-cert-snakeoil.pem
 
